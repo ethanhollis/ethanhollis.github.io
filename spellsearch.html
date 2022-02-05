@@ -1,0 +1,99 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spell Lookup</title>
+</head>
+<body>
+        <h3>Spell Search</h3>
+        <input type="text", id="searchbox">
+        <button type="submit", onclick="spell_lookup()", id="myBtn">Search</button>
+        <div id="results">
+            <h1 id="spell_title"></h1>
+            <p id="spell_content"></p> 
+            <p id="higher_level"></p>
+            <table>
+                <tr>
+                    <td>Range</td>
+                    <td id="range"></td>
+                </tr>
+                <tr>
+                    <td>Ritual</td>
+                    <td id="ritual"></td>
+                </tr>
+                <tr>
+                    <td>Duration</td>
+                    <td id="dur"></td>
+                </tr>
+                <tr>
+                    <td>Concentration</td>
+                    <td id="con"></td>
+                </tr>
+                <tr>
+                    <td>Casting Time</td>
+                    <td id="cast"></td>
+                </tr>
+                <tr>
+                    <td>Components</td>
+                    <td id="comp"></td>
+                </tr>
+            </table>
+        </div>
+</body>
+<script>
+    
+
+    function spell_lookup() {
+        const spell1 = document.getElementById('searchbox').value
+        let spell = spell1.replace(' ', '-').toLowerCase()
+        console.log(spell)
+        const Http = new XMLHttpRequest();
+        const url='https://www.dnd5eapi.co/api/spells/' + spell;
+        Http.open("GET", url);
+        Http.send();
+
+        Http.onreadystatechange = (e) => {
+            console.log(Http.responseText)
+            const output = JSON.parse(Http.responseText)
+            document.getElementById('spell_title').textContent = output['name'];
+            document.getElementById('spell_content').textContent = '';
+            document.getElementById('higher_level').textContent = '';
+
+            for (let index = 0; index < output['desc'].length; index++) {
+                document.getElementById('spell_content').textContent += output['desc'][index];    
+            }
+            for (let index = 0; index < output['higher_level'].length; index++) {
+                document.getElementById('higher_level').textContent += output['higher_level'][index];    
+            }
+
+            document.getElementById('ritual').textContent = output['ritual'];    
+            document.getElementById('con').textContent = output['concentration'];    
+            document.getElementById('comp').textContent = output['components'];    
+            document.getElementById('dur').textContent = output['duration'];    
+            document.getElementById('range').textContent = output['range'];   
+            document.getElementById('cast').textContent = output['casting_time'];    
+
+
+        }
+        
+
+    }
+
+</script>
+<script>
+// Get the input field
+var input = document.getElementById("searchbox");
+
+// Execute a function when the user releases a key on the keyboard
+input.addEventListener("keyup", function(event) {
+  // Number 13 is the "Enter" key on the keyboard
+  if (event.keyCode === 13) {
+    // Cancel the default action, if needed
+    event.preventDefault();
+    // Trigger the button element with a click
+    document.getElementById("myBtn").click();
+  }
+});
+</script>
+</html>
